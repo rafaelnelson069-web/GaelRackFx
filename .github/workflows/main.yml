@@ -1,0 +1,42 @@
+
+name: Build GaelRackFx VST3
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Setup CMake
+        uses: jwlawson/actions-setup-cmake@v2
+        with:
+          cmake-version: '3.31.6'
+
+      - name: Configure project
+        run: cmake -S . -B build -A x64
+
+      - name: Build VST3
+        run: cmake --build build --config Release --parallel 2
+
+      - name: Upload build files
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: GaelRackFx-Windows-Build
+          path: |
+            build/**/*.vst3
+            build/**/*.zip
+            build/**/Release/*.exe
+          if-no-files-found: warn
