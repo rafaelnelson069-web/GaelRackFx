@@ -1,4 +1,8 @@
 name: Build GaelRackFx VST3
+- name: Check Visual Studio
+        run: |
+          Get-Command msbuild
+          Get-ChildItem "C:\Program Files\Microsoft Visual Studio\2022"
 
 on:
   workflow_dispatch:
